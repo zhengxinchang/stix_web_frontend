@@ -5,6 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    mainColor:'#80CBC4',
+    mainColorDarken:'#008080'
   },
   getters: {
   },
