@@ -8,8 +8,8 @@
         <v-spacer></v-spacer>
         <v-col cols="12" xl="2" lg="2" md="2" sm="12">
           <v-sheet  style="z-index: 999"  class="d-flex flex-row justify-center z-transparent">
-            <v-sheet class="mx-1" rounded elevation="8" height="60" width="60"  color="blue" ></v-sheet>
-            <v-sheet class="mx-1" rounded elevation="8" height="60" width="60"  color="teal" ></v-sheet>
+            <v-sheet class="mx-1" rounded elevation="8" height="60" width="60" dark color="blue" >LOGO1</v-sheet>
+            <v-sheet class="mx-1" rounded elevation="8" height="60" width="60" dark color="teal" >LOGO2</v-sheet>
           </v-sheet>
         </v-col>
         <v-col cols="12" xl="9" lg="9" md="9" sm="12">
@@ -36,44 +36,44 @@
       </v-sheet>
 
 
-    <v-sheet class="footer" >
-      Footer?
-      <v-row>
+    <v-sheet class="footer d-flex justify-center" >
 
-        <v-col cols="8" offset="2">
+      <v-sheet class="z-transparent" width="1200">
+        <v-row>
+          <v-col cols="8" offset="2">
+            <v-row dense>
+              <v-col cols="12" xl="3" lg="3" md="6" sm="12">
+                <v-sheet :color="$store.state.mainColor" style="height: 200px;margin-top: 5px;">
 
-           <v-row dense>
-             <v-col cols="3">
-               <div style="height: 200px;background-color: #31b0d5;margin-top: 5px;">
+                </v-sheet>
+              </v-col>
+              <v-col cols="12" xl="3" lg="3" md="6" sm="12">
+                <v-sheet :color="$store.state.mainColor" style="height: 200px;margin-top: 5px;">
 
-               </div>
-             </v-col>
-             <v-col cols="3">
-               <div style="height: 200px;background-color: #31b0d5;margin-top: 5px;">
+                </v-sheet>
+              </v-col>
+              <v-col cols="12" xl="3" lg="3" md="6" sm="12">
+                <v-sheet :color="$store.state.mainColor" style="height: 200px;margin-top: 5px;">
 
-               </div>
-             </v-col>
-             <v-col cols="3">
-               <div style="height: 200px;background-color: #31b0d5;margin-top: 5px;">
+                </v-sheet>
+              </v-col>
+              <v-col cols="12" xl="3" lg="3" md="6" sm="12">
+                <v-sheet :color="$store.state.mainColor" style="height: 200px;margin-top: 5px;">
+                </v-sheet>
+              </v-col>
+            </v-row>
+            <v-row dense>
+              <v-col cols="12" xl="8" lg="8" md="12" sm="12">
+                <v-sheet :color="$store.state.mainColor" style="height: 100px;margin-bottom: 5px"></v-sheet>
+              </v-col>
+              <v-col cols="12" xl="4" lg="4" md="12" sm="12">
+                <v-sheet :color="$store.state.mainColor" style="height: 100px;margin-bottom: 5px"></v-sheet>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-sheet>
 
-               </div>
-             </v-col>
-             <v-col cols="3">
-               <div style="height: 200px;background-color: #31b0d5;margin-top: 5px;">
-
-               </div>
-             </v-col>
-           </v-row>
-          <v-row dense>
-            <v-col cols="8">
-              <div style="height: 100px;background-color: #31b0d5;margin-bottom: 5px"></div>
-            </v-col>
-            <v-col cols="4">
-              <div style="height: 100px;background-color: #31b0d5;margin-bottom: 5px"></div>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
     </v-sheet>
   </v-app>
 </template>
