@@ -8,18 +8,20 @@
         <v-spacer></v-spacer>
         <v-col cols="12" xl="2" lg="2" md="2" sm="12">
           <v-sheet  style="z-index: 999"  class="d-flex flex-row justify-center z-transparent">
-            <v-sheet class="mx-1" rounded elevation="8" height="60" width="60" dark color="blue" >LOGO1</v-sheet>
-            <v-sheet class="mx-1" rounded elevation="8" height="60" width="60" dark color="teal" >LOGO2</v-sheet>
+            <v-sheet class="mx-1" rounded elevation="8" height="60" width="60" dark color="teal" >
+              <img :src="logo.img" style="width: 100%; height: 100%"
+                   />
+            </v-sheet>
           </v-sheet>
         </v-col>
         <v-col cols="12" xl="9" lg="9" md="9" sm="12">
           <v-tabs grow  :color="$store.state.mainColorDarken" >
             <v-tab to="/" style="text-transform: none"><v-icon>mdi-home-variant-outline</v-icon>Home </v-tab>
             <v-divider vertical inset class="mx-1"></v-divider>
-            <v-tab to="/search" style="text-transform: none"><v-icon>mdi-magnify-expand</v-icon>Search</v-tab>
+            <v-tab to="/search" style="text-transform: none"><v-icon>mdi-magnify-expand</v-icon>Single Query</v-tab>
             <v-tab to="/" style="text-transform: none"><v-icon>mdi-truck-outline</v-icon>Batch Annotation</v-tab>
-            <v-divider vertical inset class="mx-1"></v-divider>
-            <v-tab style="text-transform: none"><v-icon>mdi-chart-bar-stacked</v-icon>Statistics</v-tab>
+<!--            <v-divider vertical inset class="mx-1"></v-divider>-->
+<!--            <v-tab style="text-transform: none"><v-icon>mdi-chart-bar-stacked</v-icon>Statistics</v-tab>-->
             <v-divider vertical inset class="mx-1"></v-divider>
             <v-tab style="text-transform: none"><v-icon>mdi-download-outline</v-icon>Downloads </v-tab>
             <v-tab style="text-transform: none"><v-icon>mdi-connection</v-icon>API </v-tab>
@@ -39,6 +41,7 @@
     <v-sheet class="footer d-flex justify-center" >
 
       <v-sheet class="z-transparent" width="1200">
+        footer?
         <v-row>
           <v-col cols="8" offset="2">
             <v-row dense>
@@ -84,7 +87,10 @@ export default {
   name: 'App',
 
   data: () => ({
-    //
+    logo: {
+      href: "https://github.com/ryanlayer/stix",
+      img: require('../public/imgs/STIX.2.5in.small.png'),
+    },
   }),
 };
 </script>

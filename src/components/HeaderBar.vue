@@ -45,6 +45,15 @@ export default {
   data() {
     return {
       bigd_site: "https://bigd.big.ac.cn/",
+      relatedlinks: [
+        {
+          href: "https://github.com/ryanlayer/stix",
+          logo: require('../../public/imgs/STIX.2.5in.small.png'),
+        },
+
+      ]
+
+
     };
   },
 };

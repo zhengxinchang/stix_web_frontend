@@ -6,7 +6,7 @@
         <v-spacer></v-spacer>
         <v-col cols="11">
           <v-sheet class="d-flex text-h4 z-transparent mt-2">
-            STIX2: Ultra-fast search engine for Structural Variation in large cohorts
+            Php: The best programming language in the world!
           </v-sheet>
           <v-card class="mt-6 pa-2 " elevation="8">
             <v-row>
@@ -142,8 +142,8 @@
                             item.name
                           }}</span>
 
-                        <img :src="item.logo" height="20"
-                             style="display: inline-block;border: 1px solid darkgrey"/>
+<!--                        <img :src="item.logo" height="20"-->
+<!--                             style="display: inline-block;border: 1px solid darkgrey"/>-->
                       </v-sheet>
                     </v-list-item>
                   </v-list>
@@ -160,9 +160,12 @@
                 </v-card-subtitle>
                 <v-card-text class="text-left">
                   <v-icon small>mdi-format-quote-open-outline</v-icon>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad, adipisci architecto
-                  blanditiis corporis cumque debitis delectus earum facilis illo, modi nam optio perferendis provident
-                  quam quasi sed velit veritatis, voluptatem!
+
+                  Chowdhury, M., Pedersen, B.S., Sedlazeck, F.J. et al. Searching thousands of genomes to classify somatic and novel structural variants using STIX. Nat Methods 19, 445–448 (2022). DOI:<a href="https://www.nature.com/articles/s41592-022-01423-4" target="_blank">10.1038/s41592-022-01423-4</a>
+                  <br/>
+                  <v-icon small>mdi-format-quote-open-outline</v-icon> Xinchang Zheng, Murad Chowdhury, Behzod Mirpochoev, Aaron Clauset, Ryan M Layer, Fritz J Sedlazeck. STIX: Long-reads based Accurate Structural Variation Annotation at Population Scale. BioRxiv DOI: <a href="https://www.biorxiv.org/content/10.1101/2024.09.30.615931v1" target="_blank">10.1101/2024.09.30.615931v1</a>
+
+
                 </v-card-text>
 
               </v-card>
@@ -193,40 +196,18 @@ export default {
       ],
       relatedlinks: [
         {
-          href: "https://pubchem.ncbi.nlm.nih.gov/",
+          href: "https://fritzsedlazeck.github.io/",
           icon: "mdi-link-variant",
-          name: "PubChem",
-          logo: require('../../public/imgs/related_resource_pubchem.png'),
+          name: "Sedlazeck Lab",
         },
         {
-          href: "https://ngdc.cncb.ac.cn/ccas/#/",
+          href: "https://ryanlayerlab.github.io/layerlab/",
           icon: "mdi-link-variant",
-          name: "CCAS",
-          logo: require('../../public/imgs/CCASlogo.png'),
-        },
-        {
-          href: "https://ngdc.cncb.ac.cn/ascancer/home",
+          name: "Layer Lab",
+        },        {
+          href: "https://www.colorado.edu/faculty/clauset/",
           icon: "mdi-link-variant",
-          name: "ASCancer Atlas",
-          logo: require('../../public/imgs/ascancer_atlas.png'),
-        },
-        {
-          href: "https://ngdc.cncb.ac.cn/gsa-human/",
-          icon: "mdi-link-variant",
-          name: "GSA-Human",
-          logo: require('../../public/imgs/gsahuman.png'),
-        },
-        {
-          href: "https://ngdc.cncb.ac.cn/omix/",
-          icon: "mdi-link-variant",
-          name: "OMIX",
-          logo: require('../../public/imgs/omix.png'),
-        },
-        {
-          href: "https://ngdc.cncb.ac.cn/cancerscem/",
-          icon: "mdi-link-variant",
-          name: "CancerSCEM",
-          logo: require('../../public/imgs/cancersem.png'),
+          name: "Clauset Lab",
         },
 
       ]
