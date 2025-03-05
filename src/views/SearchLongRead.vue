@@ -28,8 +28,8 @@ export default {
       examples: [
         {
           val_refver: "lrgrch38",
-          val_left_break: "1:1682238-1686375",
-          val_right_break: "1:6937070-6937317",
+          val_left_break: "1:964666-964676",
+          val_right_break: "1:964744-964754",
           val_svtype: "DEL",
           val_slop: 100,
         }
@@ -37,6 +37,13 @@ export default {
       err_msg: [],
       msg:[],
       results: {},
+      results_query_sv:{
+        val_refver: null,
+        val_left_break: null,
+        val_right_break: null,
+        val_svtype: null,
+        val_slop: null,
+      },
       is_loading: false,
     }
   },
@@ -56,7 +63,7 @@ export default {
       this.val_slop = null;
       this.err_msg = [];
       this.msg=[];
-      this.results = {};
+      // this.results = {};
     },
     clean_val(k) {
 
@@ -98,7 +105,7 @@ export default {
         this.err_msg.push(`Found empty values: ${missing_val.join(", ")}`);
       }
 
-      // this.val_slop must be positive integers
+      // this.val_slop must be positive integer
 
       if (!(_.isNumber(this.val_slop) && this.val_slop > 0)) {
         this.err_msg.push(`Padding base pairs should be positive integer`);
@@ -140,6 +147,13 @@ export default {
       this.is_loading = true;
       this.results = {};
       this.msg = [`querying SV`];
+
+
+      this.results_query_sv.val_refver = this.val_refver;
+      this.results_query_sv.val_left_break = this.val_left_break;
+      this.results_query_sv.val_right_break = this.val_right_break;
+      this.results_query_sv.val_svtype = this.val_svtype;
+      this.results_query_sv.val_slop = this.val_slop;
 
 
       let url = `https://stix.colorado.edu/${this.val_refver}/`;
@@ -185,7 +199,7 @@ export default {
                         outlined></v-text-field>
           <v-select v-model="val_svtype" :items="opt_svtype" class="mb-2" dense hide-details item-text="display"
                     item-value="val" label="SV Type" outlined></v-select>
-          <v-text-field v-model="val_slop" class="mb-2" dense hide-details label="padding base pairs"
+          <v-text-field v-model.number="val_slop" class="mb-2"   dense hide-details label="padding base pairs"
                         outlined></v-text-field>
           <v-row>
             <v-col cols="12">
@@ -236,20 +250,20 @@ export default {
             <v-row>
               <v-col cols="12">
                 &nbsp; <b>Query SV:</b> &nbsp;
-                <v-chip v-show="val_refver != null" :color="$store.state.mainColor" class="mr-2" close label small
-                        @click:close="clean_val('refver')"><b>Index</b>&nbsp; {{ val_refver }}
+                <v-chip v-show="results_query_sv.val_refver != null" :color="$store.state.mainColor" class="mr-2"  label small
+                        @click:close="clean_val('refver')"><b>Index</b>&nbsp; {{ results_query_sv.val_refver }}
                 </v-chip>
-                <v-chip v-show="val_left_break != null" :color="$store.state.mainColor" class="mr-2" close label small
-                        @click:close="clean_val('left')"><b>Left</b>&nbsp;{{ val_left_break }}
+                <v-chip v-show="results_query_sv.val_left_break != null" :color="$store.state.mainColor" class="mr-2"  label small
+                        @click:close="clean_val('left')"><b>Left</b>&nbsp;{{ results_query_sv.val_left_break }}
                 </v-chip>
-                <v-chip v-show="val_right_break != null" :color="$store.state.mainColor" class="mr-2" close label small
-                        @click:close="clean_val('right')"><b>Right</b>&nbsp;{{ val_right_break }}
+                <v-chip v-show="results_query_sv.val_right_break != null" :color="$store.state.mainColor" class="mr-2"  label small
+                        @click:close="clean_val('right')"><b>Right</b>&nbsp;{{ results_query_sv.val_right_break }}
                 </v-chip>
-                <v-chip v-show="val_svtype != null" :color="$store.state.mainColor" class="mr-2" close label small
-                        @click:close="clean_val('svtype')"><b>SV Type</b>&nbsp;{{ val_svtype }}
+                <v-chip v-show="results_query_sv.val_svtype != null" :color="$store.state.mainColor" class="mr-2"  label small
+                        @click:close="clean_val('svtype')"><b>SV Type</b>&nbsp;{{ results_query_sv.val_svtype }}
                 </v-chip>
-                <v-chip v-show="val_slop != null" :color="$store.state.mainColor" class="mr-2" close label small
-                        @click:close="clean_val('slop')"><b>Padding bp</b>&nbsp;{{ val_slop }}
+                <v-chip v-show="results_query_sv.val_slop != null" :color="$store.state.mainColor" class="mr-2"  label small
+                        @click:close="clean_val('slop')"><b>Padding bp</b>&nbsp;{{ results_query_sv.val_slop }}
                 </v-chip>
               </v-col>
             </v-row>

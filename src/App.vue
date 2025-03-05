@@ -12,7 +12,7 @@
           </v-sheet>
         </v-col>
         <v-col cols="12" xl="9" lg="9" md="9" sm="12">
-          <v-tabs grow  :color="$store.state.mainColorDarken" >
+          <v-tabs centered grow  :color="$store.state.mainColorDarken" >
             <v-tab to="/" style="text-transform: none"><v-icon>mdi-home-variant-outline</v-icon>Home </v-tab>
             <v-divider vertical inset class="mx-1"></v-divider>
             <v-tab to="/search" style="text-transform: none"><v-icon>mdi-magnify-expand</v-icon>Query</v-tab>
