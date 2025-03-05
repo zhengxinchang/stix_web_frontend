@@ -2,6 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home'
 import Search from "@/views/Search";
+import batchAnno from "@/views/batchAnno.vue";
+import BatchAnno from "@/views/batchAnno.vue";
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -14,6 +17,10 @@ const routes = [
     path: '/search',
     name: 'search',
     component: Search
+  },  {
+    path: '/batchanno',
+    name: 'batchanno',
+    component: BatchAnno
   },
 ]
 
