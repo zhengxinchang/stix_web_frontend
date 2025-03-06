@@ -5,7 +5,7 @@ module.exports = defineConfig({
   ],
   publicPath: process.env.NODE_ENV === 'production'
       ? '/stix/'
-      : '/',
+      : '/stix/',
   outputDir: 'stix',
 
   devServer:{

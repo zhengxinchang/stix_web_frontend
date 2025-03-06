@@ -19,8 +19,8 @@
 
 <!--            <v-divider vertical inset class="mx-1"></v-divider>-->
 <!--            <v-tab style="text-transform: none"><v-icon>mdi-connection</v-icon>API </v-tab>-->
-            <v-divider vertical inset class="mx-1"></v-divider>
-            <v-tab style="text-transform: none"><v-icon>mdi-heart</v-icon>Help </v-tab>
+<!--            <v-divider vertical inset class="mx-1"></v-divider>-->
+<!--            <v-tab style="text-transform: none"><v-icon>mdi-heart</v-icon>Help </v-tab>-->
           </v-tabs>
 
         </v-col>

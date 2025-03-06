@@ -35,9 +35,9 @@ export default {
         }
       ],
       err_msg: [],
-      msg:[],
-      results: {},
-      results_query_sv:{
+      msg: [],
+      results: null,
+      results_query_sv: {
         val_refver: null,
         val_left_break: null,
         val_right_break: null,
@@ -45,6 +45,11 @@ export default {
         val_slop: null,
       },
       is_loading: false,
+      long_read_meta: null,
+      plotOption: {},
+      evidence_stats: {},
+      evidence_table: [],
+      min_reads: 5,
     }
   },
   methods: {
@@ -62,7 +67,7 @@ export default {
       this.val_svtype = null;
       this.val_slop = null;
       this.err_msg = [];
-      this.msg=[];
+      this.msg = [];
       // this.results = {};
     },
     clean_val(k) {
@@ -79,10 +84,9 @@ export default {
         this.val_right_break = null;
       }
     },
-
-
     validation() {
       this.err_msg = [];
+      this.msg = [];
 
       let missing_val = [];
       if (this.val_refver == null) {
@@ -122,7 +126,6 @@ export default {
         return false;
       }
 
-
       if (!validateFormat(this.val_left_break)) {
         this.err_msg.push(`Left break format is not correct, please use format like "1:1682238-1686375" `);
       }
@@ -133,7 +136,15 @@ export default {
 
 
     },
-
+    loadLongReadMeta() {
+      fetch('/stix/long-read-meta.json')
+          .then(response => response.json())
+          .then(data => {
+            console.log(data)
+            this.long_read_meta = data // 存储到组件数据中
+          })
+          .catch(error => console.error('Can not load long-read-meta:', error))
+    },
     retrieve() {
 
       // check parameters
@@ -168,13 +179,199 @@ export default {
 
       }).then(res => {
         this.msg = [`result retrieved`];
-        this.results = res.data;
+        this.results = res.data && res.data.results && res.data.results.samples || null;
         this.is_loading = false;
+
+
+        this.postProcessResults();
+        this.processPlotData();
+
+        console.log(this.results)
+
       }).finally(() => {
         this.is_loading = false;
+      });
+
+      if (this.results == null) {
+
+      }
+
+
+    },
+    postProcessResults() {
+
+      this.results = this.results.map(item => {
+
+        let realsample = item['Sample'].split(".")[0];
+        let source = item['Sample'].split(".")[1];
+
+        item.realsample = realsample;
+        item.source = source;
+        let meta = this.long_read_meta[realsample] || null;
+
+        if (meta != null) {
+          item.Sex = meta['Sex'];
+          item.population = meta['Population'];
+          item.Super_population = meta['Super_Population'];
+        } else {
+          item.Sex = null;
+          item.population = null;
+          item.Super_population = null;
+        }
+
+        return item;
+
       })
 
+    },
+    processPlotData() {
 
+      let evidence_count = {};
+      let evidence_count_suppop = {};
+
+      this.results.forEach(item => {
+        if (evidence_count.hasOwnProperty(item['Split'])) {
+          evidence_count[item['Split']] += 1;
+        } else {
+          evidence_count[item['Split']] = 1;
+        }
+
+        if (!evidence_count_suppop.hasOwnProperty(item['Super_population'])) {
+
+          evidence_count_suppop[item['Super_population']] = {}
+
+        }
+
+        if (evidence_count_suppop[item['Super_population']].hasOwnProperty(item['Split'])) {
+          evidence_count_suppop[item['Super_population']][item['Split']] += 1;
+        } else {
+          evidence_count_suppop[item['Super_population']][item['Split']] = 1;
+        }
+
+      })
+
+      evidence_count = Object.entries(evidence_count)
+          .sort(([keyA], [keyB]) => Number(keyA) - Number(keyB))
+
+      console.log(evidence_count);
+
+      let evidence_count_obj = Object.fromEntries(evidence_count);
+
+      console.log(evidence_count_obj);
+      console.log(evidence_count_suppop);
+
+      this.evidence_stats = {...{"ALL": evidence_count_obj}, ...evidence_count_suppop};
+
+      console.log(this.evidence_stats);
+
+
+      this.updateFreqTable();
+
+      let keylist = [];
+      let vallist = [];
+      for (const [k, v] of Object.entries(evidence_count)) {
+        keylist.push(k);
+        vallist.push(v);
+      }
+
+
+      this.plotOption = {
+        title: {
+          text: 'Evidence depth histogram'
+        },
+        tooltip: {},
+        xAxis: {
+          data: keylist,
+          name: 'Evidence Depth(Support Reads)',  // X轴标签
+          nameLocation: 'middle',
+          nameGap: 30,  // 名称与轴线之间的距离
+          axisLabel: {
+            rotate: 0  // 如果X轴标签太长，可以设置旋转角度
+          }
+        },
+        yAxis: {
+          name: 'Sample Count',  // Y轴标签
+          nameLocation: 'middle',
+          nameGap: 40  // 名称与轴线之间的距离
+        },
+        series: [
+          {
+            name: 'Minimal Support Reads',
+            type: 'bar',
+            data: vallist,
+            markLine: {
+              symbol: ['none', 'none'],
+              label: {
+                formatter: 'Minimal Support Reads'
+              },
+              lineStyle: {
+                color: '#FF0000',
+                type: 'solid',
+                width: 2
+              },
+              data: [
+                { xAxis: this.min_reads }
+              ]
+            }
+          }
+        ],
+        toolbox: {
+          show: true,
+          feature: {
+            saveAsImage: {
+              show: true,
+              title: 'Save as Image',
+              name: 'evidence_depth_histogram',
+              type: 'png'
+            }
+          }
+        }
+      }
+
+    },
+    updateFreqTable(){
+      this.evidence_table = [];
+      for (const [label, counts] of Object.entries(this.evidence_stats)) {
+
+        let total = 0;
+        let hit = 0;
+
+        for (const [evidence, count] of Object.entries(counts)) {
+          total = total + Number(count);
+          if (Number(evidence) >= this.min_reads) {
+            hit = hit + Number(count);
+          }
+
+
+        }
+        let freq = hit / total * 100;
+        this.evidence_table.push({
+          category: label,
+          size: total,
+          hit: hit,
+          freq: freq,
+        })
+
+      }
+      console.log(this.evidence_table);
+    },
+  },
+  mounted() {
+    this.loadLongReadMeta();
+    // console.log(this.long_read_meta);
+  },
+  watch:{
+
+    'min_reads':{
+      handler:function(newval){
+        if (newval <=0){
+          this.min_reads = 1;
+        }
+        this.updateFreqTable();
+        this.plotOption.series[0].markLine.data[0].xAxis = this.min_reads;
+      },
+      immediate:true,
+      deep:true
     }
   }
 
@@ -199,7 +396,7 @@ export default {
                         outlined></v-text-field>
           <v-select v-model="val_svtype" :items="opt_svtype" class="mb-2" dense hide-details item-text="display"
                     item-value="val" label="SV Type" outlined></v-select>
-          <v-text-field v-model.number="val_slop" class="mb-2"   dense hide-details label="padding base pairs"
+          <v-text-field v-model.number="val_slop" class="mb-2" dense hide-details label="padding base pairs"
                         outlined></v-text-field>
           <v-row>
             <v-col cols="12">
@@ -250,19 +447,24 @@ export default {
             <v-row>
               <v-col cols="12">
                 &nbsp; <b>Query SV:</b> &nbsp;
-                <v-chip v-show="results_query_sv.val_refver != null" :color="$store.state.mainColor" class="mr-2"  label small
+                <v-chip v-show="results_query_sv.val_refver != null" :color="$store.state.mainColor" class="mr-2" label
+                        small
                         @click:close="clean_val('refver')"><b>Index</b>&nbsp; {{ results_query_sv.val_refver }}
                 </v-chip>
-                <v-chip v-show="results_query_sv.val_left_break != null" :color="$store.state.mainColor" class="mr-2"  label small
+                <v-chip v-show="results_query_sv.val_left_break != null" :color="$store.state.mainColor" class="mr-2"
+                        label small
                         @click:close="clean_val('left')"><b>Left</b>&nbsp;{{ results_query_sv.val_left_break }}
                 </v-chip>
-                <v-chip v-show="results_query_sv.val_right_break != null" :color="$store.state.mainColor" class="mr-2"  label small
+                <v-chip v-show="results_query_sv.val_right_break != null" :color="$store.state.mainColor" class="mr-2"
+                        label small
                         @click:close="clean_val('right')"><b>Right</b>&nbsp;{{ results_query_sv.val_right_break }}
                 </v-chip>
-                <v-chip v-show="results_query_sv.val_svtype != null" :color="$store.state.mainColor" class="mr-2"  label small
+                <v-chip v-show="results_query_sv.val_svtype != null" :color="$store.state.mainColor" class="mr-2" label
+                        small
                         @click:close="clean_val('svtype')"><b>SV Type</b>&nbsp;{{ results_query_sv.val_svtype }}
                 </v-chip>
-                <v-chip v-show="results_query_sv.val_slop != null" :color="$store.state.mainColor" class="mr-2"  label small
+                <v-chip v-show="results_query_sv.val_slop != null" :color="$store.state.mainColor" class="mr-2" label
+                        small
                         @click:close="clean_val('slop')"><b>Padding bp</b>&nbsp;{{ results_query_sv.val_slop }}
                 </v-chip>
               </v-col>
@@ -277,13 +479,64 @@ export default {
                     indeterminate
                 ></v-progress-linear>
 
+                <v-row>
+                  <v-col cols="8" lg="8" md="8" sm="8" xl="8" xs="8">
+                    <v-sheet v-show="!is_loading " height="400">
 
-                <v-sheet v-show="!is_loading">
+                      <v-chart :option="plotOption" class="chart"></v-chart>
 
-                  {{ this.results }}
-                </v-sheet>
+                    </v-sheet>
+
+                  </v-col>
+                  <v-col cols="4" lg="4" md="4" sm="4" xl="4" xs="4">
+
+                    <v-sheet v-show="!is_loading && results != null">
+<!--                    <v-sheet >-->
+                      <v-row >
+                        <v-col>
+                          <v-text-field append-icon="mdi-plus"
+                                        label="Minimal Support Read"
+                                        outlined
+                                        dense
+                                        v-model="min_reads"
+
+                                        @click:append="min_reads+=1"
+                          >
+                            <template v-slot:prepend-inner>
+                              <v-icon @click="min_reads-=1" >mdi-minus</v-icon>
+                            </template>
+
+                          </v-text-field>
+                        </v-col>
+                        <v-col>
+
+                        </v-col>
+                      </v-row>
 
 
+                      <v-simple-table
+
+                      >
+                        <thead>
+                        <th>Population</th>
+                        <th>Frequency(%)</th>
+                        <th>Sample Size</th>
+                        </thead>
+                        <tbody>
+
+                        <tr v-for="item in evidence_table">
+                          <td>{{ item.category }}</td>
+                          <td>{{ item.freq.toFixed(2) }}</td>
+                          <td>{{ item.size }}</td>
+                        </tr>
+
+                        </tbody>
+                      </v-simple-table>
+                    </v-sheet>
+
+
+                  </v-col>
+                </v-row>
               </v-col>
             </v-row>
           </v-sheet>
